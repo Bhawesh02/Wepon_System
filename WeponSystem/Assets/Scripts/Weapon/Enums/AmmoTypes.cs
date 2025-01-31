@@ -1,0 +1,7 @@
+﻿public enum AmmoTypes
+{
+    SEVEN_SIXTY_TWO,
+    FIVE_FIFTY_SIX,
+    TWELVE_GAUGE,
+    THREE_HUNDRED_MAGNUM
+}
