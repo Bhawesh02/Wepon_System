@@ -8,6 +8,9 @@ public static class GameplayEvents
     public static Action<int, int> OnWeaponAmmoChange;
     public static Action<string> OnShowMessage;
     public static Action OnHideMessage;
+    public static Action<PickableInteractable> OnPickableInteracleHover;
+    public static Action OnPickableInteracleHoverRemove;
+    public static Action<PickableInteractable> OnPickableInteracleSelect;
 
     public static void SendOnWeaponPickedUp(WeaponData weaponData)
     {
@@ -37,5 +40,20 @@ public static class GameplayEvents
     public static void SendOnHideMessage()
     {
         OnHideMessage?.Invoke();
+    }
+
+    public static void SendOnInteractableHover(PickableInteractable pickableInteractable)
+    {
+        OnPickableInteracleHover?.Invoke(pickableInteractable);
+    }
+    
+    public static void SendOnInteractableSelect(PickableInteractable pickableInteractable)
+    {
+        OnPickableInteracleSelect?.Invoke(pickableInteractable);
+    }
+    
+    public static void SendOnInteractableHoverRemove()
+    {
+        OnPickableInteracleHoverRemove?.Invoke();
     }
 }

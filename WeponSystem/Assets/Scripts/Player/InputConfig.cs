@@ -14,4 +14,7 @@ public class InputConfig : GenericConfig<InputConfig>
     public KeyCode firstPrimarySwitchKey = KeyCode.Alpha1;
     public KeyCode secondPrimarySwitchKey = KeyCode.Alpha2;
     public KeyCode firstSecondarySwitchKey = KeyCode.Alpha3;
+
+    [Header("Interactable")] 
+    public KeyCode interactableKey = KeyCode.F;
 }

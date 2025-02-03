@@ -7,9 +7,12 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float m_movementSpeed = 5f;
     [SerializeField] private float m_rotationSpeed = 5f;
+    [SerializeField] private float m_interactableRayDistance = 15f;
+    [SerializeField] private LayerMask m_interactableLayerMask;
     [SerializeField] private Transform m_head;
     [SerializeField] private Vector2 m_upDownRotationRange;
     [SerializeField] private List<WeaponTypeModleMap> m_weaponTypeModleMap;
+    [SerializeField] private Camera m_mainCamera;
     
     private Vector2 m_movementInput;
     private Vector2 m_rotationInput;
@@ -19,6 +22,10 @@ public class Player : MonoBehaviour
     private EquippedWeaponData[] m_secondaryEquippedWeapons;
     private Dictionary<WeaponEquipTypes, EquippedWeaponData[]> m_equippedWeaponDatasMap;
     private InputConfig m_inputConfig;
+    private Transform m_playerTransform;
+    private Ray m_interactableRay;
+    private RaycastHit m_interactableRayHit;
+    private PickableInteractable m_interactable;
 
     public List<WeaponTypeModleMap> WeaponTypeModleMaps => m_weaponTypeModleMap;
 
@@ -34,11 +41,11 @@ public class Player : MonoBehaviour
             { WeaponEquipTypes.SECONDAY , m_secondaryEquippedWeapons},
         };
         m_inputConfig = InputConfig.Instance;
+        m_playerTransform = transform;
         GameplayEvents.OnWeaponPickedUp += EquipWeapon;
         Cursor.lockState = CursorLockMode.Locked;
     }
     
-
     private void OnDestroy()
     {
         GameplayEvents.OnWeaponPickedUp -= EquipWeapon;
@@ -48,6 +55,7 @@ public class Player : MonoBehaviour
     {
         HandleInput();
         m_weaponController.OnUpdate();
+        HandleInteractable();
     }
 
     private void HandleInput()
@@ -58,12 +66,13 @@ public class Player : MonoBehaviour
         CheckWeaponSwitch();
     }
 
+    #region Movement
     private void HandleMovement()
     {
         m_movementInput.x = Input.GetAxis(m_inputConfig.horizontalMovementAxis);
         m_movementInput.y = Input.GetAxis(m_inputConfig.verticalMovementAxis);
-        transform.position += transform.forward * (m_movementInput.y * m_movementSpeed * Time.deltaTime);
-        transform.position += transform.right * (m_movementInput.x * m_movementSpeed * Time.deltaTime);
+        m_playerTransform.position += m_playerTransform.forward * (m_movementInput.y * m_movementSpeed * Time.deltaTime);
+        m_playerTransform.position += m_playerTransform.right * (m_movementInput.x * m_movementSpeed * Time.deltaTime);
     }
     
     private void HandleRotation()
@@ -72,20 +81,24 @@ public class Player : MonoBehaviour
         m_rotationInput.y += Input.GetAxis(m_inputConfig.mouseYAxis) * m_rotationSpeed * Time.deltaTime;
         m_rotationInput.y = Mathf.Clamp(m_rotationInput.y,m_upDownRotationRange.x, m_upDownRotationRange.y);
         m_head.localRotation = Quaternion.Euler(-m_rotationInput.y, 0, 0f);
-        transform.localRotation = Quaternion.Euler(0f, m_rotationInput.x, 0f);
+        m_playerTransform.localRotation = Quaternion.Euler(0f, m_rotationInput.x, 0f);
     }
     
+
+    #endregion
+
+    #region Weapon
+
     private void HandleFirAndReload()
     {
         if (Input.GetKey(m_inputConfig.fireKey))
         {
             m_weaponController.Fire();
         }
-        else if (Input.GetKeyUp(m_inputConfig.fireKey))
+        if (Input.GetKeyUp(m_inputConfig.fireKey))
         {
             m_weaponController.StopFire();
         }
-
         if (Input.GetKeyDown(m_inputConfig.reloadKey))
         {
             m_weaponController.Reload();
@@ -152,10 +165,9 @@ public class Player : MonoBehaviour
                 m_weaponController.SwitchWeapon(equippedWeaponDatas[equippedWeaponIndex]);
             }
             GameplayEvents.SendOnWeaponEquipped(equippedWeaponDatas[equippedWeaponIndex]);
-            break;
+            return;
         }
     }
-    
     
     public void UpdateWeaponData()
     {
@@ -163,4 +175,33 @@ public class Player : MonoBehaviour
                 [m_weaponController.CurrentEquippedWeaponData.equipIndex] 
             =  m_weaponController.CurrentEquippedWeaponData;
     }
+
+    #endregion
+
+    #region Interactable
+
+    private void HandleInteractable()
+    {
+        m_interactableRay = new Ray(m_mainCamera.transform.position, m_mainCamera.transform.forward);
+        Debug.DrawLine(m_interactableRay.origin, m_interactableRay.direction * m_interactableRayDistance);
+        if (!Physics.Raycast(m_interactableRay, out m_interactableRayHit, m_interactableRayDistance,
+                m_interactableLayerMask))
+        {
+            GameplayEvents.SendOnInteractableHoverRemove();
+            return;
+        }
+        m_interactable = m_interactableRayHit.transform.GetComponent<PickableInteractable>();
+        if (m_interactable == null)
+        {
+            GameplayEvents.SendOnInteractableHoverRemove();
+            return;
+        }
+        GameplayEvents.SendOnInteractableHover(m_interactable);
+        if (Input.GetKeyDown(m_inputConfig.interactableKey))
+        {
+            GameplayEvents.SendOnInteractableSelect(m_interactable);
+        }
+    }
+
+    #endregion
 }
