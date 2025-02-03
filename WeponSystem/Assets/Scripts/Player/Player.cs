@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector2 m_upDownRotationRange;
     [SerializeField] private List<WeaponTypeModleMap> m_weaponTypeModleMap;
     [SerializeField] private Camera m_mainCamera;
+    [SerializeField] private ParticleSystem m_fireParticel;
     
     private Vector2 m_movementInput;
     private Vector2 m_rotationInput;
@@ -28,6 +29,7 @@ public class Player : MonoBehaviour
     private PickableInteractable m_interactable;
 
     public List<WeaponTypeModleMap> WeaponTypeModleMaps => m_weaponTypeModleMap;
+    public ParticleSystem FireParticle => m_fireParticel;
 
     private void Awake()
     {

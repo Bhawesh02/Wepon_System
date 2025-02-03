@@ -27,6 +27,7 @@ public class FireWeaponStateController : WeaponStateController
             return;
         }
         m_equippedWeaponData.ammoAvailableInMagazine--;
+        m_weaponController.PlayFireParticle();
         m_weaponController.UpdateWeaponAmmo(m_equippedWeaponData);
         m_nextFireTime = Time.time + 1 / m_equippedWeaponData.currentWeaponData.fireRate;
     }

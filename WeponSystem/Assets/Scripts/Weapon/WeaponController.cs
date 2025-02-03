@@ -112,6 +112,7 @@ public class WeaponController
         m_currenWeaponTypeModleMap.weaponModle?.SetActive(false);
         nextWeaponTypeModleMap.weaponModle?.SetActive(true);
         m_currenWeaponTypeModleMap = nextWeaponTypeModleMap;
+        m_player.FireParticle.transform.position = m_currenWeaponTypeModleMap.muzzleEnd.position;
     }
     
     public void UpdateWeaponAmmo(EquippedWeaponData equippedWeaponData)
@@ -124,6 +125,11 @@ public class WeaponController
     public void RunCoroutine(IEnumerator enumerator)
     {
         m_player.StartCoroutine(enumerator);
+    }
+
+    public void PlayFireParticle()
+    {
+        m_player.FireParticle.Play();
     }
     
 }
