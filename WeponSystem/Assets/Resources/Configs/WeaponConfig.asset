@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94680c77fe919b04ea120203e7624520, type: 3}
   m_Name: WeaponConfig
   m_EditorClassIdentifier: 
-  primaryWeapons: 010000000200000003000000
-  secondaryWeapons: 0400000005000000
+  m_primaryWeapons: 010000000200000003000000
+  m_secondaryWeapons: 0400000005000000

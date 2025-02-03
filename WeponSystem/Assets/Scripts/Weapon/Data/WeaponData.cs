@@ -13,6 +13,7 @@ public class WeaponData : ScriptableObject
     public float weaponDamage;
     public float fireDistance;
     public float fireRate;
+    public float reloadTime = 1f;
 
     [Header("Ammo Properties")] 
     public AmmoTypes ammoType;

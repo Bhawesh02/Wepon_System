@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: 
   weaponType: 5
-  weaponIcon: {fileID: 0}
+  weaponIcon: {fileID: 707546815, guid: cecbc1e21bfd4654cace7246a1733982, type: 3}
   weaponName: Pistol
   weaponDamage: 50
   fireDistance: 20
   fireRate: 2
+  reloadTime: 1
   ammoType: 1
   magazineSize: 30
   maxMagnizeNumberToHold: 5

@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: DOUBLE_BARRLE
   m_EditorClassIdentifier: 
   weaponType: 2
-  weaponIcon: {fileID: 0}
+  weaponIcon: {fileID: -928061793, guid: cecbc1e21bfd4654cace7246a1733982, type: 3}
   weaponName: Double Barrel
   weaponDamage: 200
   fireDistance: 10
   fireRate: 30
+  reloadTime: 1
   ammoType: 2
   magazineSize: 30
   maxMagnizeNumberToHold: 5
