@@ -167,13 +167,36 @@ public class Player : MonoBehaviour
             GameplayEvents.SendOnWeaponEquipped(equippedWeaponDatas[equippedWeaponIndex]);
             return;
         }
+
+        SwitchGun(weaponEquipType, weponDataToAdd);
     }
-    
-    public void UpdateWeaponData()
+
+    private void SwitchGun(WeaponEquipTypes weaponEquipType, WeaponData weponDataToAdd)
     {
-        m_equippedWeaponDatasMap.GetValueOrDefault(m_weaponController.CurrentEquippedWeaponData.weaponEquipType)
-                [m_weaponController.CurrentEquippedWeaponData.equipIndex] 
-            =  m_weaponController.CurrentEquippedWeaponData;
+        EquippedWeaponData equippedWeaponData = m_weaponController.CurrentEquippedWeaponData;
+        equippedWeaponData.currentWeaponData = weponDataToAdd;
+        equippedWeaponData.ammoAvailableInMagazine = weponDataToAdd.magazineSize;
+        equippedWeaponData.extraAmmoAvailable =
+            weponDataToAdd.magazineSize * weponDataToAdd.maxMagnizeNumberToHold;
+        if (equippedWeaponData.weaponEquipType == weaponEquipType)
+        {
+            m_weaponController.SwitchWeapon(equippedWeaponData);
+        }
+        else
+        {
+            // Replace Gun at first index of any equip type
+            equippedWeaponData.equipIndex = 0;
+            equippedWeaponData.weaponEquipType = weaponEquipType;
+        }
+        UpdateWeaponData(equippedWeaponData);
+        GameplayEvents.SendOnWeaponEquipped(equippedWeaponData);
+    }
+
+    public void UpdateWeaponData(EquippedWeaponData equippedWeaponData)
+    {
+        m_equippedWeaponDatasMap.GetValueOrDefault(equippedWeaponData.weaponEquipType)
+                [equippedWeaponData.equipIndex] 
+            =  equippedWeaponData;
     }
 
     #endregion

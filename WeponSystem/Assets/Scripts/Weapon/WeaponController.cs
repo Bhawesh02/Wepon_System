@@ -117,7 +117,7 @@ public class WeaponController
     public void UpdateWeaponAmmo(EquippedWeaponData equippedWeaponData)
     {
         m_currentEquippedWeaponData = equippedWeaponData;
-        m_player.UpdateWeaponData();
+        m_player.UpdateWeaponData(m_currentEquippedWeaponData);
         GameplayEvents.SendOnWeaponAmmoChange(equippedWeaponData.ammoAvailableInMagazine, equippedWeaponData.extraAmmoAvailable);
     }
 
