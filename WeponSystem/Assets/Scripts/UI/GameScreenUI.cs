@@ -72,11 +72,13 @@ public class GameScreenUI : MonoBehaviour
     {
         EqiupGunReferences[] iconHolder = m_weaponEquipIconHolderMap.GetValueOrDefault(equippedWeaponData.weaponEquipType);
         iconHolder[equippedWeaponData.equipIndex].gunIcon.sprite = equippedWeaponData.currentWeaponData.weaponIcon;
+        iconHolder[equippedWeaponData.equipIndex].gunIcon.color = Color.white;
     }
     
     private void HandleOnWeaponSwitched(EquippedWeaponData equippedWeaponData)
     {
         m_currentActiveGun.currentActiveGunIcon.sprite = equippedWeaponData.currentWeaponData.weaponIcon;
+        m_currentActiveGun.currentActiveGunIcon.color = Color.white;
         HandleOnWeaponAmmoChange(equippedWeaponData.ammoAvailableInMagazine, equippedWeaponData.extraAmmoAvailable);
     }
     

@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
 
     public List<WeaponTypeModleMap> WeaponTypeModleMaps => m_weaponTypeModleMap;
     public ParticleSystem FireParticle => m_fireParticel;
+    public Camera MainCamera => m_mainCamera;
 
     private void Awake()
     {

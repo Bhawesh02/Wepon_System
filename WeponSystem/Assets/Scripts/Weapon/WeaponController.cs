@@ -15,6 +15,7 @@ public class WeaponController
     private Player m_player;
     
     public EquippedWeaponData CurrentEquippedWeaponData => m_currentEquippedWeaponData;
+    public Transform MainCameraTransform => m_player.MainCamera.transform;
 
     public WeaponController(Player player)
     {
@@ -89,7 +90,6 @@ public class WeaponController
         {
             return;
         }
-        Debug.Log($"New Weapon State : {weaponState}");
         m_currentWeaponStateController?.OnStateExit();
         WeaponStateController newWeaponStateController = m_weaponStatesMap.GetValueOrDefault(weaponState);
         newWeaponStateController.OnStateEnter();
