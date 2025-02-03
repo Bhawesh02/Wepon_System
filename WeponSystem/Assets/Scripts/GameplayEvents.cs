@@ -3,7 +3,7 @@
 public static class GameplayEvents
 {
     public static Action<WeaponData> OnWeaponPickedUp;
-    public static Action<WeaponData, WeaponEquipTypes, int> OnWeaponEquipped;
+    public static Action<EquippedWeaponData> OnWeaponEquipped;
     public static Action<EquippedWeaponData> OnWeaponSwitched;
     public static Action<int, int> OnWeaponAmmoChange;
     public static Action<string> OnShowMessage;
@@ -14,9 +14,9 @@ public static class GameplayEvents
         OnWeaponPickedUp?.Invoke(weaponData);
     }
 
-    public static void SendOnWeaponEquipped(WeaponData weaponData, WeaponEquipTypes weaponEquipType, int weaponEquippedIndex)
+    public static void SendOnWeaponEquipped(EquippedWeaponData equippedWeaponData)
     {
-        OnWeaponEquipped?.Invoke(weaponData, weaponEquipType, weaponEquippedIndex);
+        OnWeaponEquipped?.Invoke(equippedWeaponData);
     }
     
     public static void SendOnWeaponSwitched(EquippedWeaponData equippedWeaponData)

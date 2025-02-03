@@ -74,23 +74,15 @@ public class WeaponController
         SwitchWeaponState(WeaponStates.OUT_OF_AMMO);
     }
     
-    public void SwitchWeapon(EquippedWeaponData newEquippedWeaponData)
+    public void SwitchWeapon(EquippedWeaponData switchWeaponData)
     {
         m_currentWeaponStateController?.HandleWeaponSwitch();
         SwitchWeaponState(WeaponStates.IDLE);
-        m_currentEquippedWeaponData = newEquippedWeaponData;
-        WeaponTypes nextWeaponType = newEquippedWeaponData.currentWeaponData.weaponType;
-        if (m_currenWeaponTypeModleMap.weaponType == nextWeaponType)
-        {
-            return;
-        }
-        WeaponTypeModleMap nextWeaponTypeModleMap = m_weaponTypeModleMap.Find(data => data.weaponType == nextWeaponType);
-        m_currenWeaponTypeModleMap.weaponModle?.SetActive(false);
-        nextWeaponTypeModleMap.weaponModle?.SetActive(true);
-        m_currenWeaponTypeModleMap = nextWeaponTypeModleMap;
+        m_currentEquippedWeaponData = switchWeaponData;
+        WeaponModleSwitch(m_currentEquippedWeaponData);
         GameplayEvents.SendOnWeaponSwitched(m_currentEquippedWeaponData);
     }
-    
+
     public void SwitchWeaponState(WeaponStates weaponState)
     {
         if (m_currentWeaponState == weaponState)
@@ -105,9 +97,27 @@ public class WeaponController
         m_currentWeaponState = weaponState;
     }
 
+    private void WeaponModleSwitch(EquippedWeaponData switchWeaponData)
+    {
+        WeaponTypes nextWeaponType = switchWeaponData.currentWeaponData.weaponType;
+        if (switchWeaponData.currentWeaponData == null)
+        {
+            Debug.Break();
+        }
+        if (m_currenWeaponTypeModleMap.weaponType == nextWeaponType)
+        {
+            return;
+        }
+        WeaponTypeModleMap nextWeaponTypeModleMap = m_weaponTypeModleMap.Find(data => data.weaponType == nextWeaponType);
+        m_currenWeaponTypeModleMap.weaponModle?.SetActive(false);
+        nextWeaponTypeModleMap.weaponModle?.SetActive(true);
+        m_currenWeaponTypeModleMap = nextWeaponTypeModleMap;
+    }
+    
     public void UpdateWeaponAmmo(EquippedWeaponData equippedWeaponData)
     {
         m_currentEquippedWeaponData = equippedWeaponData;
+        m_player.UpdateWeaponData();
         GameplayEvents.SendOnWeaponAmmoChange(equippedWeaponData.ammoAvailableInMagazine, equippedWeaponData.extraAmmoAvailable);
     }
 

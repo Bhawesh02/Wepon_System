@@ -34,6 +34,7 @@ public class GameScreenUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_message;
     
     private Dictionary<WeaponEquipTypes, EqiupGunReferences[]> m_weaponEquipIconHolderMap;
+    private InputConfig m_inputConfig;
 
     private void Awake()
     {
@@ -42,6 +43,8 @@ public class GameScreenUI : MonoBehaviour
             { WeaponEquipTypes.PRIMARY , m_primaryEquippedWeaponHolders},
             { WeaponEquipTypes.SECONDAY , m_secondaryEquippedWeaponHolders}
         };
+        m_inputConfig = InputConfig.Instance;
+        SetUpWeaponHolders();
         GameplayEvents.OnWeaponEquipped += HandleOnWeaponEquipped;
         GameplayEvents.OnWeaponSwitched += HandleOnWeaponSwitched;
         GameplayEvents.OnWeaponAmmoChange += HandleOnWeaponAmmoChange;
@@ -57,11 +60,18 @@ public class GameScreenUI : MonoBehaviour
         GameplayEvents.OnShowMessage -= HandleOnShowMessage;
         GameplayEvents.OnHideMessage -= HandleOnHideMessage;
     }
-    
-    private void HandleOnWeaponEquipped(WeaponData weaponData, WeaponEquipTypes weaponEquipTypes, int weponIndex)
+
+    private void SetUpWeaponHolders()
     {
-        EqiupGunReferences[] iconHolder = m_weaponEquipIconHolderMap.GetValueOrDefault(weaponEquipTypes);
-        iconHolder[weponIndex].gunIcon.sprite = weaponData.weaponIcon;
+        m_primaryEquippedWeaponHolders[0].switchKey.text = $"{m_inputConfig.firstPrimarySwitchKey}";
+        m_primaryEquippedWeaponHolders[1].switchKey.text = $"{m_inputConfig.secondPrimarySwitchKey}";
+        m_secondaryEquippedWeaponHolders[0].switchKey.text = $"{m_inputConfig.firstSecondarySwitchKey}";
+    }
+    
+    private void HandleOnWeaponEquipped(EquippedWeaponData equippedWeaponData)
+    {
+        EqiupGunReferences[] iconHolder = m_weaponEquipIconHolderMap.GetValueOrDefault(equippedWeaponData.weaponEquipType);
+        iconHolder[equippedWeaponData.equipIndex].gunIcon.sprite = equippedWeaponData.currentWeaponData.weaponIcon;
     }
     
     private void HandleOnWeaponSwitched(EquippedWeaponData equippedWeaponData)

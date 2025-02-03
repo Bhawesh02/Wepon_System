@@ -7,21 +7,21 @@
     public override void OnStateEnter()
     {
         base.OnStateEnter();
-        //TODO
+        if (m_equippedWeaponData.ammoAvailableInMagazine <= 0)
+        {
+            m_weaponController.Reload();
+        }
     }
 
     public override void OnUpdate()
     {
-        //TODO
     }
 
     public override void HandleWeaponSwitch()
     {
-        //TODO
     }
 
     public override void OnStateExit()
     {
-        //TODO
     }
 }

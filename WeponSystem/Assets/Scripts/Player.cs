@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private const string HORIZONTAL_AXIS = "Horizontal";
-    private const string VERTICAL_AXIS = "Vertical";
 
     [SerializeField] private float m_movementSpeed = 5f;
+    [SerializeField] private float m_rotationSpeed = 5f;
+    [SerializeField] private Transform m_head;
+    [SerializeField] private Vector2 m_upDownRotationRange;
     [SerializeField] private List<WeaponTypeModleMap> m_weaponTypeModleMap;
-    [SerializeField] private KeyCode m_fireKeyCode = KeyCode.Mouse0;
-    [SerializeField] private KeyCode m_reloadKeyCode = KeyCode.R;
     
-    private float m_horizontalInput;
-    private float m_verticalInput;
+    private Vector2 m_movementInput;
+    private Vector2 m_rotationInput;
     private WeaponController m_weaponController;
     private WeaponConfig m_weaponConfig;
     private EquippedWeaponData[] m_primaryEquippedWeapons;
     private EquippedWeaponData[] m_secondaryEquippedWeapons;
     private Dictionary<WeaponEquipTypes, EquippedWeaponData[]> m_equippedWeaponDatasMap;
+    private InputConfig m_inputConfig;
 
     public List<WeaponTypeModleMap> WeaponTypeModleMaps => m_weaponTypeModleMap;
 
@@ -33,7 +33,9 @@ public class Player : MonoBehaviour
             { WeaponEquipTypes.PRIMARY , m_primaryEquippedWeapons},
             { WeaponEquipTypes.SECONDAY , m_secondaryEquippedWeapons},
         };
+        m_inputConfig = InputConfig.Instance;
         GameplayEvents.OnWeaponPickedUp += EquipWeapon;
+        Cursor.lockState = CursorLockMode.Locked;
     }
     
 
@@ -44,46 +46,95 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        m_horizontalInput = Input.GetAxis(HORIZONTAL_AXIS);
-        m_verticalInput = Input.GetAxis(VERTICAL_AXIS);
-        Move();
-        if (Input.GetKey(m_fireKeyCode))
+        HandleInput();
+        m_weaponController.OnUpdate();
+    }
+
+    private void HandleInput()
+    {
+        HandleMovement();
+        HandleRotation();
+        HandleFirAndReload();
+        CheckWeaponSwitch();
+    }
+
+    private void HandleMovement()
+    {
+        m_movementInput.x = Input.GetAxis(m_inputConfig.horizontalMovementAxis);
+        m_movementInput.y = Input.GetAxis(m_inputConfig.verticalMovementAxis);
+        transform.position += transform.forward * (m_movementInput.y * m_movementSpeed * Time.deltaTime);
+        transform.position += transform.right * (m_movementInput.x * m_movementSpeed * Time.deltaTime);
+    }
+    
+    private void HandleRotation()
+    {
+        m_rotationInput.x += Input.GetAxis(m_inputConfig.mouseXAxis) * m_rotationSpeed * Time.deltaTime;
+        m_rotationInput.y += Input.GetAxis(m_inputConfig.mouseYAxis) * m_rotationSpeed * Time.deltaTime;
+        m_rotationInput.y = Mathf.Clamp(m_rotationInput.y,m_upDownRotationRange.x, m_upDownRotationRange.y);
+        m_head.localRotation = Quaternion.Euler(-m_rotationInput.y, 0, 0f);
+        transform.localRotation = Quaternion.Euler(0f, m_rotationInput.x, 0f);
+    }
+    
+    private void HandleFirAndReload()
+    {
+        if (Input.GetKey(m_inputConfig.fireKey))
         {
             m_weaponController.Fire();
         }
-        else if (Input.GetKeyUp(m_fireKeyCode))
+        else if (Input.GetKeyUp(m_inputConfig.fireKey))
         {
             m_weaponController.StopFire();
         }
 
-        if (Input.GetKeyDown(m_reloadKeyCode))
+        if (Input.GetKeyDown(m_inputConfig.reloadKey))
         {
             m_weaponController.Reload();
         }
-        m_weaponController.OnUpdate();
     }
 
-    private void Move()
+    private void CheckWeaponSwitch()
     {
-        transform.position += transform.forward * (m_verticalInput * m_movementSpeed * Time.deltaTime);
-        transform.position += transform.right * (m_horizontalInput * m_movementSpeed * Time.deltaTime);
+        HandleWeaponSwitch(m_primaryEquippedWeapons);
+        HandleWeaponSwitch(m_secondaryEquippedWeapons);
+    }
+
+    private void HandleWeaponSwitch(EquippedWeaponData[] equippedWeaponDatas)
+    {
+        foreach (EquippedWeaponData equippedWeaponData in equippedWeaponDatas)
+        {
+            if (!equippedWeaponData.currentWeaponData)
+            {
+                continue;    
+            }
+            if (Input.GetKeyDown(GetKeyCode(equippedWeaponData)))
+            {
+                m_weaponController.SwitchWeapon(equippedWeaponData);
+            }
+        }
+    }
+
+    private KeyCode GetKeyCode(EquippedWeaponData equippedWeaponData)
+    {
+        switch (equippedWeaponData.weaponEquipType)
+        {
+            case WeaponEquipTypes.PRIMARY:
+                return equippedWeaponData.equipIndex == 0 ? m_inputConfig.firstPrimarySwitchKey : m_inputConfig.secondPrimarySwitchKey;
+            case WeaponEquipTypes.SECONDAY:
+                return m_inputConfig.firstSecondarySwitchKey;
+            default:
+                return m_inputConfig.firstPrimarySwitchKey;
+        }
     }
 
     private void EquipWeapon(WeaponData weaponData)
     {
         WeaponEquipTypes weaponEquipType = m_weaponConfig.GetWeaponEquipType(weaponData.weaponType);
-        
-        int weaponEquipIndex = AddToEquippedWeapon(
-            m_equippedWeaponDatasMap.GetValueOrDefault(weaponEquipType), weaponData);
-
-        if (weaponEquipIndex != -1)
-        {
-            GameplayEvents.SendOnWeaponEquipped(weaponData, weaponEquipType, weaponEquipIndex);
-        }    
+        AddToEquippedWeapon(weaponEquipType, weaponData);
     }
 
-    private int AddToEquippedWeapon(EquippedWeaponData[] equippedWeaponDatas, WeaponData weponDataToAdd)
+    private void AddToEquippedWeapon(WeaponEquipTypes weaponEquipType, WeaponData weponDataToAdd)
     {
+        EquippedWeaponData[] equippedWeaponDatas = m_equippedWeaponDatasMap.GetValueOrDefault(weaponEquipType);
         for (int equippedWeaponIndex = 0; equippedWeaponIndex < equippedWeaponDatas.Length; equippedWeaponIndex++)
         {
             if (equippedWeaponDatas[equippedWeaponIndex].currentWeaponData)
@@ -94,12 +145,22 @@ public class Player : MonoBehaviour
             equippedWeaponDatas[equippedWeaponIndex].ammoAvailableInMagazine = weponDataToAdd.magazineSize;
             equippedWeaponDatas[equippedWeaponIndex].extraAmmoAvailable =
                 weponDataToAdd.magazineSize * weponDataToAdd.maxMagnizeNumberToHold;
+            equippedWeaponDatas[equippedWeaponIndex].weaponEquipType = weaponEquipType;
+            equippedWeaponDatas[equippedWeaponIndex].equipIndex = equippedWeaponIndex;
             if (!m_weaponController.CurrentEquippedWeaponData.currentWeaponData)
             {
                 m_weaponController.SwitchWeapon(equippedWeaponDatas[equippedWeaponIndex]);
             }
-            return equippedWeaponIndex;
+            GameplayEvents.SendOnWeaponEquipped(equippedWeaponDatas[equippedWeaponIndex]);
+            break;
         }
-        return -1;
+    }
+    
+    
+    public void UpdateWeaponData()
+    {
+        m_equippedWeaponDatasMap.GetValueOrDefault(m_weaponController.CurrentEquippedWeaponData.weaponEquipType)
+                [m_weaponController.CurrentEquippedWeaponData.equipIndex] 
+            =  m_weaponController.CurrentEquippedWeaponData;
     }
 }

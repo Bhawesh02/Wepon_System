@@ -409,7 +409,7 @@ GameObject:
   - component: {fileID: 209425168}
   - component: {fileID: 209425169}
   m_Layer: 0
-  m_Name: Virtual Camera
+  m_Name: PlayerCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -423,13 +423,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 209425167}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.533, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1637394414}
-  m_Father: {fileID: 774115483}
+  m_Father: {fileID: 787690540}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &209425169
 MonoBehaviour:
@@ -942,7 +942,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 209425168}
+  - {fileID: 787690540}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &774115484
@@ -957,10 +957,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f03bbcb524a48dbb69e03cfbab6e4ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_movementSpeed: 100
+  m_movementSpeed: 10
+  m_rotationSpeed: 10
+  m_head: {fileID: 787690540}
+  m_upDownRotationRange: {x: -30, y: 30}
   m_weaponTypeModleMap: []
-  m_fireKeyCode: 323
-  m_reloadKeyCode: 114
+--- !u!1 &787690539
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 787690540}
+  m_Layer: 0
+  m_Name: Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &787690540
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787690539}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 209425168}
+  m_Father: {fileID: 774115483}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,7 +1271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4adee6c512f84d5d87e3dfe9693aa164, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_weaponDataToEquip: {fileID: 11400000, guid: d88f9ad58897f164e9f8594d6ada68fe,
+  m_weaponDataToEquip: {fileID: 11400000, guid: 122a19b5e6d93a9448f5d7dfe15dfa09,
     type: 2}
   m_equipWeaponKeyCode: 32
 --- !u!4 &1109555789
