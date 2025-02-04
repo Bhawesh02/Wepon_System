@@ -3,7 +3,6 @@
     protected WeaponStates m_weaponState;
     protected WeaponController m_weaponController;
     protected EquippedWeaponData m_equippedWeaponData;
-
     
     public WeaponStates WeaponStates => m_weaponState; 
     

@@ -78,8 +78,8 @@ public class WeaponController
     public void SwitchWeapon(EquippedWeaponData switchWeaponData)
     {
         m_currentWeaponStateController?.HandleWeaponSwitch();
-        SwitchWeaponState(WeaponStates.IDLE);
         m_currentEquippedWeaponData = switchWeaponData;
+        SwitchWeaponState(WeaponStates.IDLE);
         WeaponModleSwitch(m_currentEquippedWeaponData);
         GameplayEvents.SendOnWeaponSwitched(m_currentEquippedWeaponData);
     }
