@@ -112,7 +112,7 @@ The strategy pattern in weapon switching allows the game to respond dynamically 
 
 ## Working video
 
-[![](https://github.com/Bhawesh02/Mesh-Deformation/blob/master/Mesh%20Deform%20Test/Assets/Extra/Mesh%20Deformer.gif)](https://youtu.be/mKKhAUzzRZM)
+[![]([https://github.com/Bhawesh02/Mesh-Deformation/blob/master/Mesh%20Deform%20Test/Assets/Extra/Mesh%20Deformer.gif])]((https://www.youtube.com/watch?v=jnKlDJ_W1Xw))
 
 ## Contributions
 
